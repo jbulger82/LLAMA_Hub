@@ -1,0 +1,15 @@
+{
+  "name": "google-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Google Workspace services (Gmail, Calendar, Drive).",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "googleapis": "^142.0.0"
+  },
+  "author": "LlamaHub AI",
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,26 @@
+{
+  "safeCommands": {
+    "uptime": { "command": "uptime", "args": [] },
+    "free": { "command": "free", "args": ["-h"] },
+    "df": { "command": "df", "args": ["-h"] },
+    "sensors": { "command": "sensors", "args": [] },
+    "top": { "command": "top", "args": ["-b", "-n", "1"] },
+    "lscpu": { "command": "lscpu", "args": [] },
+    "lsblk": { "command": "lsblk", "args": [] },
+    "cpuinfo": { "command": "cat", "args": ["/proc/cpuinfo"] },
+    "ping": { "command": "ping", "args": ["-c", "4"] },
+    "curl": { "command": "curl", "args": [] },
+    "ls": { "command": "ls", "args": ["-la"] },
+    "ps": { "command": "ps", "args": ["aux"] },
+    "kill": { "command": "kill", "args": [] },
+    "piper-on": { "command": "/home/jeff/piper-toggle-on.sh", "args": [] },
+    "piper-off": { "command": "/home/jeff/piper-toggle-off.sh", "args": [] },
+    "whisper-on": { "command": "/home/jeff/whisper-toggle-on.sh", "args": [] },
+    "whisper-off": { "command": "/home/jeff/whisper-toggle-off.sh", "args": [] }
+  },
+  "recoveryCommands": {
+    "reset-ui": { "command": "echo", "args": ["Simulating execution of UI reset script. This is a placeholder command."] },
+    "repair-terminal": { "command": "echo", "args": ["Simulating execution of terminal repair script. This is a placeholder command."] },
+    "fix-bash": { "command": "echo", "args": ["Simulating execution of bash profile fix script. This is a placeholder command."] }
+  }
+}

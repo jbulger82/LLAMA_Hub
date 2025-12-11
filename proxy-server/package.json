@@ -1,0 +1,23 @@
+{
+  "name": "llamahub-proxy-server",
+  "version": "1.0.0",
+  "description": "A proxy microservice for the LlamaHub application to handle CORS-restricted API calls.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "eventsource": "^4.1.0",
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2",
+    "socks-proxy-agent": "^8.0.4",
+    "systeminformation": "^5.22.11",
+    "zod": "^4.1.13"
+  }
+}

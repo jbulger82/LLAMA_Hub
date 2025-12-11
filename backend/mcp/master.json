@@ -1,0 +1,48 @@
+{
+  "servers": {
+    "filesystem": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "enabled": true
+    },
+    "tavily": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "tavily-mcp@latest"],
+      "env": {
+        "TAVILY_API_KEY": ""
+      },
+      "enabled": true
+    },
+    "playwright-mcp": {
+      "transport": "sse",
+      "url": "http://localhost:3005/sse",
+      "enabled": true
+    },
+    "custom_tools": {
+      "transport": "stdio",
+      "command": "python3",
+      "args": ["-u", "../NEWTOOL/custom_tools_mcp.py"],
+      "enabled": true
+    },
+    "obsidian-mcp-server": {
+      "transport": "stdio",
+      "command": "node",
+      "args": ["../obsidian-mcp-server-main/dist/index.js"],
+      "env": {
+        "OBSIDIAN_API_KEY": "",
+        "OBSIDIAN_BASE_URL": "http://127.0.0.1:27123",
+        "OBSIDIAN_VERIFY_SSL": "false",
+        "OBSIDIAN_ENABLE_CACHE": "true"
+      },
+      "enabled": true
+    },
+    "google-mcp-server": {
+      "transport": "stdio",
+      "command": "node",
+      "args": ["../google-mcp-server/index.js"],
+      "enabled": true
+    }
+  }
+}

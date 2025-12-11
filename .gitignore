@@ -1,0 +1,52 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Builds
+dist/
+build/
+.out/
+.cache/
+coverage/
+.playwright/
+.vitest/
+dist-ssr/
+
+# Env / secrets
+.env
+.env.*
+*.pem
+*.key
+*.crt
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Python helper stuff
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Misc
+*.tar
+*.zip
+*.tgz
+*.bak

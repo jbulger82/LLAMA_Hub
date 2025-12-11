@@ -1,0 +1,16 @@
+{
+  "name": "playwright-mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP server exposing Playwright browsing tools for LlamaHub",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "playwright": "^1.47.0"
+  }
+}

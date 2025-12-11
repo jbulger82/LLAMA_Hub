@@ -1,0 +1,8 @@
+{
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "name": "website",
+  "description": "legit",
+  "prompt": ""
+}
