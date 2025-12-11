@@ -1,0 +1,257 @@
+{#- FRANCINE GPT-OSS-20B STRICT COMPATIBILITY TEMPLATE -#}
+
+{#- 1. TYPE RENDERING (UNTOUCHED) -#}
+{%- macro render_typescript_type(param_spec, required_params, is_nullable=false) -%}
+    {%- if param_spec.type == "array" -%}
+        {%- if param_spec['items'] -%}
+            {%- if param_spec['items']['type'] == "string" -%}{{- "string[]" }}
+            {%- elif param_spec['items']['type'] == "number" -%}{{- "number[]" }}
+            {%- elif param_spec['items']['type'] == "integer" -%}{{- "number[]" }}
+            {%- elif param_spec['items']['type'] == "boolean" -%}{{- "boolean[]" }}
+            {%- else -%}
+                {%- set inner_type = render_typescript_type(param_spec['items'], required_params) -%}
+                {%- if inner_type == "object | object" or inner_type|length > 50 -%}{{- "any[]" }}
+                {%- else -%}{{- inner_type + "[]" }}{%- endif -%}
+            {%- endif -%}
+            {%- if param_spec.nullable -%}{{- " | null" }}{%- endif -%}
+        {%- else -%}{{- "any[]" }}{%- if param_spec.nullable -%}{{- " | null" }}{%- endif -%}{%- endif -%}
+    {%- elif param_spec.type is defined and param_spec.type is iterable and param_spec.type is not string and param_spec.type is not mapping and param_spec.type[0] is defined -%}
+        {%- if param_spec.type | length > 1 -%}{{- param_spec.type | join(" | ") }}{%- else -%}{{- param_spec.type[0] }}{%- endif -%}
+    {%- elif param_spec.oneOf -%}
+        {%- set has_object_variants = false -%}
+        {%- for variant in param_spec.oneOf -%}{%- if variant.type == "object" -%}{%- set has_object_variants = true -%}{%- endif -%}{%- endfor -%}
+        {%- if has_object_variants and param_spec.oneOf|length > 1 -%}{{- "any" }}
+        {%- else -%}
+            {%- for variant in param_spec.oneOf -%}
+                {{- render_typescript_type(variant, required_params) -}}
+                {%- if variant.description %}{{- "// " + variant.description }}{%- endif -%}
+                {%- if variant.default is defined %}{{ "// default: " + variant.default|tojson }}{%- endif -%}
+                {%- if not loop.last %}{{- " | " }}{% endif -%}
+            {%- endfor -%}
+        {%- endif -%}
+    {%- elif param_spec.type == "string" -%}
+        {%- if param_spec.enum -%}{{- '"' + param_spec.enum|join('" | "') + '"' -}}
+        {%- else -%}{{- "string" }}{%- if param_spec.nullable %}{{- " | null" }}{%- endif -%}{%- endif -%}
+    {%- elif param_spec.type == "number" -%}{{- "number" }}
+    {%- elif param_spec.type == "integer" -%}{{- "number" }}
+    {%- elif param_spec.type == "boolean" -%}{{- "boolean" }}
+    {%- elif param_spec.type == "object" -%}
+        {%- if param_spec.properties -%}
+            {{- "{ " }}
+            {%- for prop_name, prop_spec in param_spec.properties.items() -%}
+                {{- prop_name -}}
+                {%- if prop_name not in (param_spec.required or []) -%}{{- "?" }}{%- endif -%}
+                {{- ": " }}{{ render_typescript_type(prop_spec, param_spec.required or []) }}
+                {%- if not loop.last -%}{{-", " }}{%- endif -%}
+            {%- endfor -%}
+            {{- "}" }}
+        {%- else -%}{{- "object" }}{%- endif -%}
+    {%- else -%}{{- "any" }}{%- endif -%}
+{%- endmacro -%}
+
+{#- 2. TOOL NAMESPACE (MODIFIED TEXT ONLY) -#}
+{%- macro render_tool_namespace(namespace_name, tools) -%}
+{{- "## " + namespace_name + "\n" }}
+{{- "namespace " + namespace_name + " {\n\n" }}
+{{- "// CRITICAL: To use these tools, you must output a SLASH COMMAND in the final channel.\n" }}
+{{- "// Format: /mcp <tool_name> {json_args}\n" }}
+{{- "// Do NOT output the TypeScript function call directly.\n\n" }}
+{%- for tool in tools %}
+    {%- set tool = tool.function %}
+    {{- "// " + tool.description + "\n" }}
+    {{- "// Command: /mcp " + tool.name + "\n" }}
+    {{- "type "+ tool.name + " = " }}
+    {%- if tool.parameters and tool.parameters.properties %}
+        {{- "(_: {\n" }}
+        {%- for param_name, param_spec in tool.parameters.properties.items() %}
+            {%- if param_spec.description %}
+                {{- "// " + param_spec.description + "\n" }}
+            {%- endif %}
+            {{- param_name }}
+            {%- if param_name not in (tool.parameters.required or []) -%}
+                {{- "?" }}
+            {%- endif -%}
+            {{- ": " }}
+            {{- render_typescript_type(param_spec, tool.parameters.required or []) }}
+            {%- if param_spec.default is defined -%}
+                {%- if param_spec.enum %}
+                    {{- ", // default: " + param_spec.default }}
+                {%- elif param_spec.oneOf %}
+                    {{- "// default: " + param_spec.default }}
+                {%- else %}
+                    {{- ", // default: " + param_spec.default|tojson }}
+                {%- endif -%}
+            {%- endif -%}
+            {%- if not loop.last %}
+                {{- ",\n" }}
+            {%- else %}
+                {{- ",\n" }}
+            {%- endif -%}
+        {%- endfor %}
+        {{- "}) => any;\n\n" }}
+    {%- else -%}
+        {{- "() => any;\n\n" }}
+    {%- endif -%}
+{%- endfor %}
+{{- "} // namespace " + namespace_name }}
+{%- endmacro -%}
+
+{#- 3. BUILTIN TOOLS (MODIFIED TEXT ONLY) -#}
+{%- macro render_builtin_tools(browser_tool, python_tool) -%}
+    {%- if browser_tool %}
+        {{- "## browser\n" }}
+        {{- "// Use command: /search <query>\n" }}
+        {{- "namespace browser {\n" }}
+        {{- "type search = (_: { query: string }) => any;\n" }}
+        {{- "}\n" }}
+    {%- endif -%}
+    {%- if python_tool %}
+        {{- "## python\n" }}
+        {{- "// Use command: /python <code>\n" }}
+        {{- "namespace python {\n" }}
+        {{- "type run = (_: { code: string }) => any;\n" }}
+        {{- "}\n" }}
+    {%- endif -%}
+{%- endmacro -%}
+
+{#- 4. SYSTEM MESSAGE (INJECTED PERSONA) -#}
+{%- macro build_system_message() -%}
+    {#- Override identity with Francine -#}
+    {%- set model_identity = "You are Francine, Jeff's personal, local AI assistant. You are confident, sharp, practical, friendly, and down-to-earth. You can swear casually. You treat Jeff as a long-term collaborator." %}
+    {{- model_identity + "\n" }}
+    {{- "Knowledge cutoff: 2024-06\n" }}
+    {{- "Current date: " + strftime_now("%Y-%m-%d") + "\n\n" }}
+    
+    {#- FORCE HIGH REASONING -#}
+    {%- set reasoning_effort = "high" %}
+    {{- "Reasoning: " + reasoning_effort + "\n\n" }}
+
+    {%- if builtin_tools is defined and builtin_tools is not none %}
+        {{- "# Tools\n" }}
+        {%- set available_builtin_tools = namespace(browser=false, python=false) %}
+        {%- for tool in builtin_tools %}
+            {%- if tool == "browser" %}
+                {%- set available_builtin_tools.browser = true %}
+            {%- elif tool == "python" %}
+                {%- set available_builtin_tools.python = true %}
+            {%- endif %}
+        {%- endfor %}
+        {{- render_builtin_tools(available_builtin_tools.browser, available_builtin_tools.python) }}
+    {%- endif -%}
+
+    {{- "# Valid channels: analysis, commentary, final. Channel must be included for every message." }}
+    {%- if tools -%}
+        {{- "\nCalls to these tools must go to the commentary channel: 'functions'." }}
+        {{- "\nIMPORTANT: For the FINAL channel output, you MUST translate your tool choice into the Slash Command format (/mcp ...)." }}
+    {%- endif -%}
+{%- endmacro -%}
+
+{#- 5. MAIN LOGIC (UNTOUCHED) -#}
+
+{#- Render system message -#}
+{{- "<|start|>system<|message|>" }}
+{{- build_system_message() }}
+{{- "<|end|>" }}
+
+{#- Extract developer message -#}
+{%- if developer_instructions is defined and developer_instructions is not none %}
+    {%- set developer_message = developer_instructions %}
+    {%- set loop_messages = messages %}
+{%- elif messages[0].role == "developer" or messages[0].role == "system" %}
+    {%- set developer_message = messages[0].content %}
+    {%- set loop_messages = messages[1:] %}
+{%- else %}
+    {%- set developer_message = "" %}
+    {%- set loop_messages = messages %}
+{%- endif %}
+
+{#- Render developer message -#}
+{%- if developer_message or tools %}
+    {{- "<|start|>developer<|message|>" }}
+    {%- if developer_message %}
+        {{- "# Instructions\n" }}
+        {{- developer_message }}
+    {%- endif %}
+    {%- if tools -%}
+        {%- if developer_message %}
+            {{- " " }}
+        {%- endif %}
+        {{- "# Tools\n" }}
+        {{- render_tool_namespace("functions", tools) }}
+    {%- endif -%}
+    {{- "<|end|>" }}
+{%- endif %}
+
+{#- Render messages -#}
+{%- set last_tool_call = namespace(name=none) %}
+{%- for message in loop_messages -%}
+    {%- if message.role == 'assistant' -%}
+        {%- if "content" in message and message.content %}
+            {%- if "<|channel|>analysis<|message|>" in message.content or "<|channel|>final<|message|>" in message.content %}
+                {{- raise_exception("Error: Content contains tags.") }}
+            {%- endif %}
+        {%- endif %}
+        {%- if "thinking" in message %}
+            {%- if "<|channel|>analysis<|message|>" in message.thinking or "<|channel|>final<|message|>" in message.thinking %}
+                {{- raise_exception("Error: Thinking contains tags.") }}
+            {%- endif %}
+        {%- endif %}
+        {%- if "tool_calls" in message %}
+            {%- set future_final_message = namespace(found=false) %}
+            {%- for future_message in loop_messages[loop.index:] %}
+                {%- if future_message.role == 'assistant' and "tool_calls" not in future_message %}
+                    {%- set future_final_message.found = true %}
+                {%- endif %}
+            {%- endfor %}
+            {%- set tool_call = message.tool_calls[0] %}
+            {%- if tool_call.function %}
+                {%- set tool_call = tool_call.function %}
+            {%- endif %}
+            {%- if message.content and message.thinking %}
+                {{- raise_exception("Cannot pass both content and thinking!") }}
+            {%- elif message.content and not future_final_message.found %}
+                {{- "<|start|>assistant<|channel|>analysis<|message|>" + message.content + "<|end|>" }}
+            {%- elif message.thinking and not future_final_message.found %}
+                {{- "<|start|>assistant<|channel|>analysis<|message|>" + message.thinking + "<|end|>" }}
+            {%- endif %}
+            {{- "<|start|>assistant to=" }}
+            {{- "functions." + tool_call.name + "<|channel|>commentary " }}
+            {{- (tool_call.content_type if tool_call.content_type is defined else "json") + "<|message|>" }}
+            {%- if tool_call.arguments is string %}
+                {{- tool_call.arguments }}
+            {%- else %}
+                {{- tool_call.arguments|tojson }}
+            {%- endif %}
+            {{- "<|call|>" }}
+            {%- set last_tool_call.name = tool_call.name %}
+        {%- elif loop.last and not add_generation_prompt %}
+            {%- if "thinking" in message %}
+                {{- "<|start|>assistant<|channel|>analysis<|message|>" + message.thinking + "<|end|>" }}
+            {%- endif %}
+            {{- "<|start|>assistant<|channel|>final<|message|>" + message.content + "<|end|>" }}
+        {%- elif "thinking" in message %}
+            {{- "<|start|>assistant<|channel|>analysis<|message|>" + message.content + "<|end|>" }}
+            {%- set last_tool_call.name = none %}
+        {%- else %}
+            {{- "<|start|>assistant<|channel|>final<|message|>" + message.content + "<|end|>" }}
+            {%- set last_tool_call.name = none %}
+        {%- endif %}
+    {%- elif message.role == 'tool' -%}
+        {%- if last_tool_call.name is none %}
+            {{- raise_exception("Tool message without previous call!") }}
+        {%- endif %}
+        {{- "<|start|>functions." + last_tool_call.name }}
+        {%- if message.content is string %}
+            {{- " to=assistant<|channel|>commentary<|message|>" + message.content + "<|end|>" }}
+        {%- else %}
+            {{- " to=assistant<|channel|>commentary<|message|>" + message.content|tojson + "<|end|>" }}
+        {%- endif %}
+    {%- elif message.role == 'user' -%}
+        {{- "<|start|>user<|message|>" + message.content + "<|end|>" }}
+    {%- endif -%}
+{%- endfor -%}
+
+{#- Generation prompt -#}
+{%- if add_generation_prompt -%}
+<|start|>assistant
+{%- endif -%}
