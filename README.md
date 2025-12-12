@@ -3,24 +3,25 @@
 
 # LlamaHub — Ultimate Local `llama.cpp` Command Center
 
-LlamaHub is an upgraded, batteries-included GUI for [`llama.cpp`](https://github.com/ggerganov/llama.cpp).
+LlamaHub is the llama.cpp GUI upgraded, for a Badass like you [`llama.cpp`](https://github.com/ggerganov/llama.cpp).
 
-It’s built to be the local AI orchestrator you actually want to use: rich chat, Smart Canvas, local RAG, deep research, MCP tool ecosystem, browser automation, Google integrations, voice, and a full slash-command toolbox.
+It’s built to be the local AI orchestrator you actually want to use: rich chat, Expermental Smart Canvas, local RAG, deep research, MCP tool ecosystem, browser automation, Google integrations, voice, and a full slash-command toolbox.
 
-Everything runs locally by default — no cloud required unless you explicitly opt in.
+Everything runs locally by default — no cloud required! You can if desired go straight cloud or be a badass and turn on multi agent mode (local/cloud hybrid)  
 
 ---
 
 ## Why This Improves the Stock `llama.cpp` UI
 
-- **Multi-provider orchestration**  
-  Talk to your local `llama-server` (or any OpenAI-compatible endpoint) and optionally fall back to Gemini/OpenAI for reasoning, embeddings, or vision.
+- **Multi-Agent/provider orchestration**  
+  Talk to your local `llama-server` (or any OpenAI-compatible endpoint) and optionally fall back to or combine Gemini/OpenAI for reasoning, embeddings, or vision.
+  I've successfully had 7 agents simutaneously 1 local oss20b and qwen embedding model alongside of 5 Gemini cloud agents
 
 - **Embedded RAG UI**  
-  Drag-and-drop files, embed, search, and amanage memory from the Knowledge Base view — no extra scripts required.
+  Drag-and-drop files, embed, search, and auto or maually manage memory to and from the Knowledge Base view — no extra scripts required.
 
 - **Smart Canvas**  
-  Inline file workspace with previews (PDF/DOCX/Markdown/text/images), editing, and chat-aware context.
+  (Needs work) Inline file workspace with previews (PDF/DOCX/Markdown/text/images), editing, and chat-aware context.
 
 - **Deep Research worker**  
   Local or cloud hybrid multi-step research pipeline with optional cloud fact-checking; progress UI baked into chat.
@@ -32,16 +33,14 @@ Everything runs locally by default — no cloud required unless you explicitly o
   Browser STT, Vosk WS, Whisper via proxy, Piper TTS — all wired to the chat input and proxy endpoints.
 
 - **Slash commands everywhere**  
-  Huge command palette for search, curl, web scraping, social posts, system stats, canvas, RAG, agents, code-gen, and more.
+  Huge command palette for search, curl, web scraping, social posts, system stats, canvas, RAG, agents, code-gen, and more 
+  so you can use the tools even with dumb models.
 
 - **Persistent, local-first storage**  
   IndexedDB + localStorage, no telemetry. Recovery modal + chat log export to disk.
 
-- **Extension bridge**  
-  Chrome extension can stream page content/selection into chat for instant summarization/analysis.
-
 - **Ready-to-run scripts**  
-  `start.sh` / `start.bat` spin up proxy, Playwright MCP, and Vite dev server in one shot.
+  `start.sh` / `start.bat` spin up proxy, MCP stack, and Vite dev server in one shot.
 
 ---
 
@@ -114,7 +113,7 @@ Everything runs locally by default — no cloud required unless you explicitly o
   - App shell in `App.tsx`, Zustand store in `store.ts`, RAG worker, research worker.
 
 - **Proxy service:** `proxy-server/index.js` (port 3001)  
-  - MCP hub, voice (Piper/Whisper), minimal system commands, research file append/read, chat log saving, system stats.
+  - MCP hub, voice (Piper/Whisper), minimal system shell commands, research file append/read, chat log saving, system stats.
 
 - **MCP Hub:** `backend/mcp/McpHub.js` + `backend/mcp/master.json`  
   - Connects STDIO/SSE MCP servers (filesystem/Tavily/Playwright/custom/Obsidian/Google).
@@ -748,9 +747,22 @@ After editing, restart the proxy (it loads MCP config at startup).
 
 ---
 
-## Credits & Contact
+## About LlamaHub
 
-LlamaHub was created and is maintained by **Jeff Bulger** as a local-first cloud hybrid AI command center built on top of `llama.cpp`.
+LlamaHub is a locally-run, privacy-first AI assistant built for power users. It gives you a serious control panel for working with local/cloud LLMs, tools, and your own data—without handing everything to some remote server.
 
-* **Author:** Jeff Bulger
-* **Contact (questions / collabs / ideas):** `admin@jeffbulger.dev`
+The core idea behind LlamaHub is decentralization and a local-first mindset: you own the models, you own the data, you own the logs. You’re the admin here, and the system is designed to adapt to your workflow, not the other way around.
+
+LlamaHub is more than “just a chatbot.” It can plug into your tools and environment for things like:
+
+*   persistent knowledge (RAG over your own files),
+*   web access when you choose to enable it,
+*   code generation and analysis,
+*   multi-agent / deep research workflows,
+*   and an expanding set of integrations.
+
+I’m actively looking for sponsors and collaborators to help push the platform further.
+If you’re interested in contributing, integrating it into your own stack, or just want to talk ideas, reach out:
+
+**Created and maintained by:** Jeff Bulger  
+**Contact:** admin@jeffbulger.dev
