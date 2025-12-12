@@ -1,3 +1,6 @@
+<img width="1920" height="1080" alt="llamauiSS1" src="https://github.com/user-attachments/assets/0da4d46a-2cdc-4fd2-806d-da24a32189ec" />
+
+
 # LlamaHub — Ultimate Local `llama.cpp` Command Center
 
 LlamaHub is an upgraded, batteries-included GUI for [`llama.cpp`](https://github.com/ggerganov/llama.cpp).
@@ -8,13 +11,13 @@ Everything runs locally by default — no cloud required unless you explicitly o
 
 ---
 
-## Why This Beats the Stock `llama.cpp` UI
+## Why This Improves the Stock `llama.cpp` UI
 
 - **Multi-provider orchestration**  
   Talk to your local `llama-server` (or any OpenAI-compatible endpoint) and optionally fall back to Gemini/OpenAI for reasoning, embeddings, or vision.
 
 - **Embedded RAG UI**  
-  Drag-and-drop files, embed, search, and manage memory from the Knowledge Base view — no extra scripts required.
+  Drag-and-drop files, embed, search, and amanage memory from the Knowledge Base view — no extra scripts required.
 
 - **Smart Canvas**  
   Inline file workspace with previews (PDF/DOCX/Markdown/text/images), editing, and chat-aware context.
@@ -270,7 +273,7 @@ All settings persist locally (IndexedDB/localStorage). Use the Emergency Recover
 * **Chat basics:**  
   Type normally, or use the Tools button to insert slash commands.
 
-* **Smart Canvas:**  
+* **Smart Canvas:**  (Needs Work)
   * `/canvas open` then create/edit/list/read files;  
   * attach files via the paperclip or Tools → “Attach file.”  
   * Canvas files are available to the assistant as context.
@@ -305,6 +308,8 @@ All settings persist locally (IndexedDB/localStorage). Use the Emergency Recover
 ---
 
 ## Using the Gemini Dev API (Experimental OpenAI Provider)
+<img width="1920" height="1080" alt="gem" src="https://github.com/user-attachments/assets/eacd0621-95a6-4763-95a7-7f88f81a518e" />
+
 
 LlamaHub can talk to Google’s Gemini Dev API through Google’s OpenAI-compatible shim. To make this work, you **must** use the experimental dev provider and the correct base URL.
 
@@ -657,6 +662,7 @@ If a requested tool does not exist:
 ```
 
 ### Debugging Tool-Calling Issues
+<img width="1920" height="1080" alt="gem3" src="https://github.com/user-attachments/assets/b77fbab4-8a36-4760-a250-667dac7b16cf" />
 
 If your model isn’t using tools correctly:
 
@@ -742,7 +748,7 @@ After editing, restart the proxy (it loads MCP config at startup).
 
 ## Credits & Contact
 
-LlamaHub was created and is maintained by **Jeff Bulger** as a local-first AI command center built on top of `llama.cpp`.
+LlamaHub was created and is maintained by **Jeff Bulger** as a local-first cloud hybrid AI command center built on top of `llama.cpp`.
 
 * **Author:** Jeff Bulger
 * **Contact (questions / collabs / ideas):** `admin@jeffbulger.dev`
