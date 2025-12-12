@@ -23,7 +23,7 @@ Everything runs locally by default — no cloud required unless you explicitly o
   Inline file workspace with previews (PDF/DOCX/Markdown/text/images), editing, and chat-aware context.
 
 - **Deep Research worker**  
-  Local multi-step research pipeline with optional cloud fact-checking; progress UI baked into chat.
+  Local or cloud hybrid multi-step research pipeline with optional cloud fact-checking; progress UI baked into chat.
 
 - **MCP hub + Playwright**  
   Auto-discovers MCP servers (filesystem, Tavily, Playwright browser automation, Obsidian, Google MCP, custom tools).
@@ -57,6 +57,7 @@ Everything runs locally by default — no cloud required unless you explicitly o
 
 - `/embed file`, `/save to memory`, `/export memory`, `/delete from memory`.
 - Worker-based chunking + embeddings (auto/local/cloud), cosine similarity search, threshold/topK tuning.
+- Auto-memory (optional) snapshots conversations into RAG every N messages (interval configurable in Settings).
 - Knowledge Base view to search, view, export, and delete documents.
 
 ### Smart Canvas
@@ -72,7 +73,7 @@ Everything runs locally by default — no cloud required unless you explicitly o
 ### MCP Ecosystem
 
 - Master config at `backend/mcp/master.json` (filesystem, Tavily, Playwright SSE, custom Python tools, Obsidian MCP, Google MCP).
-- MCP status/tool discovery via proxy endpoints; tools surfaced in the UI.
+- MCP status/tool discovery via proxy endpoints; tools surface automatically in the UI tool picker and the system prompt/tool list without manual edits.
 
 ### Web & Data
 
@@ -272,6 +273,7 @@ All settings persist locally (IndexedDB/localStorage). Use the Emergency Recover
 
 * **Chat basics:**  
   Type normally, or use the Tools button to insert slash commands.
+  The Tools popover auto-populates with MCP tools discovered at startup—no manual prompt editing needed.
 
 * **Smart Canvas:**  (Needs Work)
   * `/canvas open` then create/edit/list/read files;  
